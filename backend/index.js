@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const crypto = require("crypto");
 require("dotenv").config();
-const db = require("./firebase");
 
 const app = express();
 app.use(cors());
@@ -52,23 +51,9 @@ app.post("/webhook", express.raw({ type: "application/json" }), async (req, res)
     const payment = paymentData.payload.payment.entity;
     const notes = payment.notes;
 
-    try {
-      await db.collection("payments").add({
-        payment_id: payment.id,
-        amount: payment.amount,
-        currency: payment.currency,
-        status: payment.status,
-        name: notes.name,
-        email: notes.email,
-        phone: notes.phone,
-        address: notes.address,
-        createdAt: new Date(),
-      });
+    // Removed Firebase interaction here
 
-      res.json({ status: "success" });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
+    res.json({ status: "success" });
   } else {
     res.status(400).json({ error: "Invalid signature" });
   }
